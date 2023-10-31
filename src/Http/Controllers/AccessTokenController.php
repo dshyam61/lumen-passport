@@ -94,8 +94,9 @@ class AccessTokenController extends \Laravel\Passport\Http\Controllers\AccessTok
     {
         $query = Token::where('user_id', $token->user_id)->where('client_id', $token->client_id);
 
-        $query->where('expires_at', '<', date("Y-m-d H:i:s"));
-        $query->where('revoked', false);
+        if ($tokenId) {
+            $query->where('id', '<>', $tokenId);
+        }
 
         $query->update(['revoked' => true]);
     }
