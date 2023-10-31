@@ -56,7 +56,7 @@ class AccessTokenController extends \Laravel\Passport\Http\Controllers\AccessTok
                 return $response;
             }
 
-            if ($token->client->firstParty() && LumenPassport::$allowMultipleTokens) {
+             if ($token->client->firstParty() && LumenPassport::$allowMultipleTokens) {
                 // We keep previous tokens for password clients
             } else {
                 $this->revokeOrDeleteAccessTokens($token, $tokenId);
@@ -94,9 +94,8 @@ class AccessTokenController extends \Laravel\Passport\Http\Controllers\AccessTok
     {
         $query = Token::where('user_id', $token->user_id)->where('client_id', $token->client_id);
 
-        if ($tokenId) {
-            $query->where('id', '<>', $tokenId);
-        }
+        $query->where('expires_at', '<', date("Y-m-d H:i:s"));
+        $query->where('revoked', false);
 
         $query->update(['revoked' => true]);
     }
